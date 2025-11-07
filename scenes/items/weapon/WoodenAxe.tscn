@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://cpsfjc85p6x6y"]
+
+[ext_resource type="Texture2D" uid="uid://8j3obphw5f0s" path="res://assets/sprites/items/weapon/wooden_axe.png" id="1_34dbb"]
+
+[node name="WoodenAxe" type="Node2D"]
+
+[node name="Visual" type="Sprite2D" parent="."]
+position = Vector2(6, -24)
+texture = ExtResource("1_34dbb")
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Hitbox"]
+polygon = PackedVector2Array(3, -7, 3, -37, 6, -37, 6, -36, 11, -33, 14, -33, 17, -34, 17, -36, 18, -39, 18, -49, 16, -52, 11, -52, 5, -49, 3, -50, 2, -51, -2, -51, -6, -48, -6, -38, -5, -37, -3, -37, -3, 3, -2, 4, 3, 4, 4, 3, 4, -2, 3, -3)

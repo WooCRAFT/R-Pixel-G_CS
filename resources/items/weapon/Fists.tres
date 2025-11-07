@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=3 format=3 uid="uid://t4urvbnvk5dm"]
+
+[ext_resource type="PackedScene" uid="uid://bokw434fbf2ch" path="res://scenes/items/weapon/Fists.tscn" id="1_mtm8h"]
+[ext_resource type="Script" uid="uid://b3ocheuli6awv" path="res://scripts/data/WeaponData.cs" id="1_to5hr"]
+
+[resource]
+script = ExtResource("1_to5hr")
+Damage = 5
+AttackCooldown = 0.2
+AttackDuration = 0.4
+WeaponScene = ExtResource("1_mtm8h")
+metadata/_custom_type_script = "uid://b3ocheuli6awv"

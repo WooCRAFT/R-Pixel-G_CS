@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://cgdaapoluyc46"]
+
+[ext_resource type="Texture2D" uid="uid://cis3eihp5ty5f" path="res://assets/sprites/ui/HUD_HP_фон.png" id="1_6ll6g"]
+[ext_resource type="Script" uid="uid://cfx0lnmcrni4l" path="res://scripts/ui/HUD.cs" id="1_ig75s"]
+[ext_resource type="Texture2D" uid="uid://dtq6q1j5lroiw" path="res://assets/sprites/ui/HUD_HP_фон2.png" id="2_ig75s"]
+[ext_resource type="Texture2D" uid="uid://dul7wj4o3c3hy" path="res://assets/sprites/ui/HUD_HP_фон1.png" id="3_4ed8p"]
+
+[node name="HUD" type="CanvasLayer"]
+metadata/_edit_use_anchors_ = true
+
+[node name="HUD" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 32.0
+offset_bottom = 32.0
+script = ExtResource("1_ig75s")
+
+[node name="PlayerHealthBar" type="TextureProgressBar" parent="HUD"]
+layout_mode = 0
+offset_right = 32.0
+offset_bottom = 32.0
+value = 100.0
+texture_under = ExtResource("2_ig75s")
+texture_over = ExtResource("1_6ll6g")
+texture_progress = ExtResource("3_4ed8p")

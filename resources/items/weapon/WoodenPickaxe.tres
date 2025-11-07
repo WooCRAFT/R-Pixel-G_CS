@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=3 format=3 uid="uid://dxympmok07s2n"]
+
+[ext_resource type="Script" uid="uid://b3ocheuli6awv" path="res://scripts/data/WeaponData.cs" id="1_etgn1"]
+[ext_resource type="PackedScene" uid="uid://dkd8plhh6y0ge" path="res://scenes/items/weapon/WoodenPickaxe.tscn" id="1_mipul"]
+
+[resource]
+script = ExtResource("1_etgn1")
+Damage = 18
+AttackAnimationName = "attack_pickaxe"
+Type = 3
+WeaponScene = ExtResource("1_mipul")
+metadata/_custom_type_script = "uid://b3ocheuli6awv"

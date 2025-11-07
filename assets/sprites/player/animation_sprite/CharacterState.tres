@@ -1,0 +1,148 @@
+[gd_resource type="AnimationNodeStateMachine" load_steps=33 format=3 uid="uid://cypkjjy8ugtmr"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_vnj0r"]
+animation = &"run_LEGS_ONLY"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_oijuj"]
+animation = &"run_back_LEGS_ONLY"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_os2r0"]
+animation = &"jump_fall_loop_LEGS_ONLY"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_otj66"]
+animation = &"wings_fly_backward_LEGS_ONLY"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_h8i3u"]
+animation = &"wings_fly_forward_LEGS_ONLY"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_m8tgj"]
+animation = &"wings_fly_hover_LEGS_ONLY"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_23pfx"]
+animation = &"idle_main_LEGS_ONLY"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_nbrea"]
+animation = &"attack_axe_ARMS_ONLY"
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_pqgeq"]
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_ivwbj"]
+
+[sub_resource type="AnimationNodeBlend3" id="AnimationNodeBlend3_iwpx6"]
+
+[sub_resource type="AnimationNodeBlend3" id="AnimationNodeBlend3_8mt8c"]
+
+[sub_resource type="AnimationNodeAdd2" id="AnimationNodeAdd2_os2r0"]
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_23pfx"]
+graph_offset = Vector2(-264.4984, 389.12164)
+nodes/output/position = Vector2(1280, 500)
+"nodes/Animation 3/node" = SubResource("AnimationNodeAnimation_oijuj")
+"nodes/Animation 3/position" = Vector2(220, 0)
+nodes/Attack_Axe_Torso/node = SubResource("AnimationNodeAnimation_nbrea")
+nodes/Attack_Axe_Torso/position = Vector2(760, 660)
+"nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_vnj0r")
+"nodes/Animation 2/position" = Vector2(240, 360)
+nodes/Attack_Fall_Switch/node = SubResource("AnimationNodeBlend2_pqgeq")
+nodes/Attack_Fall_Switch/position = Vector2(480, 480)
+nodes/Attack_Ground_Switch/node = SubResource("AnimationNodeBlend3_iwpx6")
+nodes/Attack_Ground_Switch/position = Vector2(480, 140)
+nodes/Animation/node = SubResource("AnimationNodeAnimation_23pfx")
+nodes/Animation/position = Vector2(200, 180)
+"nodes/Animation 5/node" = SubResource("AnimationNodeAnimation_os2r0")
+"nodes/Animation 5/position" = Vector2(-140, 440)
+nodes/Out_Attack/node = SubResource("AnimationNodeAdd2_os2r0")
+nodes/Out_Attack/position = Vector2(1020, 460)
+nodes/Attack_Ground_Air_Switch/node = SubResource("AnimationNodeBlend2_ivwbj")
+nodes/Attack_Ground_Air_Switch/position = Vector2(740, 360)
+nodes/Attack_Wings_Direction_Switch/node = SubResource("AnimationNodeBlend3_8mt8c")
+nodes/Attack_Wings_Direction_Switch/position = Vector2(200, 600)
+"nodes/Animation 6/node" = SubResource("AnimationNodeAnimation_otj66")
+"nodes/Animation 6/position" = Vector2(-180, 600)
+"nodes/Animation 7/node" = SubResource("AnimationNodeAnimation_h8i3u")
+"nodes/Animation 7/position" = Vector2(-120, 960)
+"nodes/Animation 8/node" = SubResource("AnimationNodeAnimation_m8tgj")
+"nodes/Animation 8/position" = Vector2(-200, 780)
+node_connections = [&"output", 0, &"Out_Attack", &"Attack_Fall_Switch", 0, &"Animation 5", &"Attack_Fall_Switch", 1, &"Attack_Wings_Direction_Switch", &"Attack_Ground_Switch", 0, &"Animation 3", &"Attack_Ground_Switch", 1, &"Animation", &"Attack_Ground_Switch", 2, &"Animation 2", &"Out_Attack", 0, &"Attack_Ground_Air_Switch", &"Out_Attack", 1, &"Attack_Axe_Torso", &"Attack_Ground_Air_Switch", 0, &"Attack_Ground_Switch", &"Attack_Ground_Air_Switch", 1, &"Attack_Fall_Switch", &"Attack_Wings_Direction_Switch", 0, &"Animation 6", &"Attack_Wings_Direction_Switch", 1, &"Animation 8", &"Attack_Wings_Direction_Switch", 2, &"Animation 7"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_8mt8c"]
+animation = &"death"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_64yxg"]
+animation = &"run"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_av4b1"]
+animation = &"run_back"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_oogkf"]
+animation = &"wings_fly_backward"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_fe5lf"]
+animation = &"jump_fall_loop"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pqgeq"]
+animation = &"wings_fly_hover"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ivwbj"]
+animation = &"wings_fly_forward"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_rd1f2"]
+animation = &"idle_main"
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_8mt8c"]
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_oogkf"]
+
+[sub_resource type="AnimationNodeBlend3" id="AnimationNodeBlend3_otj66"]
+
+[sub_resource type="AnimationNodeBlend3" id="AnimationNodeBlend3_c42qn"]
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_vnj0r"]
+graph_offset = Vector2(-691.0047, 132.4221)
+nodes/output/position = Vector2(680, 80)
+"nodes/Animation 3/node" = SubResource("AnimationNodeAnimation_av4b1")
+"nodes/Animation 3/position" = Vector2(-40, -140)
+nodes/Animation/node = SubResource("AnimationNodeAnimation_rd1f2")
+nodes/Animation/position = Vector2(-180, -20)
+"nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_64yxg")
+"nodes/Animation 2/position" = Vector2(-40, 80)
+nodes/Ground_Switch/node = SubResource("AnimationNodeBlend3_otj66")
+nodes/Ground_Switch/position = Vector2(180, -120)
+nodes/Fall_Switch/node = SubResource("AnimationNodeBlend2_8mt8c")
+nodes/Fall_Switch/position = Vector2(100, 160)
+nodes/Ground_Air_Switch/node = SubResource("AnimationNodeBlend2_oogkf")
+nodes/Ground_Air_Switch/position = Vector2(400, 40)
+"nodes/Animation 5/node" = SubResource("AnimationNodeAnimation_fe5lf")
+"nodes/Animation 5/position" = Vector2(-360, 160)
+nodes/Wings_Direction_Switch/node = SubResource("AnimationNodeBlend3_c42qn")
+nodes/Wings_Direction_Switch/position = Vector2(-140, 280)
+"nodes/Animation 4/node" = SubResource("AnimationNodeAnimation_oogkf")
+"nodes/Animation 4/position" = Vector2(-600, 260)
+"nodes/Animation 6/node" = SubResource("AnimationNodeAnimation_pqgeq")
+"nodes/Animation 6/position" = Vector2(-400, 400)
+"nodes/Animation 7/node" = SubResource("AnimationNodeAnimation_ivwbj")
+"nodes/Animation 7/position" = Vector2(-460, 580)
+node_connections = [&"output", 0, &"Ground_Air_Switch", &"Ground_Switch", 0, &"Animation 3", &"Ground_Switch", 1, &"Animation", &"Ground_Switch", 2, &"Animation 2", &"Fall_Switch", 0, &"Animation 5", &"Fall_Switch", 1, &"Wings_Direction_Switch", &"Ground_Air_Switch", 0, &"Ground_Switch", &"Ground_Air_Switch", 1, &"Fall_Switch", &"Wings_Direction_Switch", 0, &"Animation 4", &"Wings_Direction_Switch", 1, &"Animation 6", &"Wings_Direction_Switch", 2, &"Animation 7"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_fe5lf"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_oogkf"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_pqgeq"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ivwbj"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_iwpx6"]
+
+[resource]
+states/Attack_Axe/node = SubResource("AnimationNodeBlendTree_23pfx")
+states/Attack_Axe/position = Vector2(267, 191)
+states/Death/node = SubResource("AnimationNodeAnimation_8mt8c")
+states/Death/position = Vector2(558, 175)
+states/End/position = Vector2(863, 107)
+states/Locomotion/node = SubResource("AnimationNodeBlendTree_vnj0r")
+states/Locomotion/position = Vector2(369, 114)
+states/Start/position = Vector2(199, 100)
+transitions = ["Start", "Locomotion", SubResource("AnimationNodeStateMachineTransition_fe5lf"), "Locomotion", "Attack_Axe", SubResource("AnimationNodeStateMachineTransition_oogkf"), "Attack_Axe", "Locomotion", SubResource("AnimationNodeStateMachineTransition_pqgeq"), "Locomotion", "Death", SubResource("AnimationNodeStateMachineTransition_ivwbj"), "Attack_Axe", "Death", SubResource("AnimationNodeStateMachineTransition_iwpx6")]
+graph_offset = Vector2(-72, 60)

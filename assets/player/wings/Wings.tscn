@@ -1,0 +1,397 @@
+[gd_scene load_steps=14 format=3 uid="uid://clpkjkim6fy6l"]
+
+[ext_resource type="Script" uid="uid://dmj6kbutxqj5m" path="res://assets/player/wings/WingsController.cs" id="1_45f4j"]
+[ext_resource type="Texture2D" uid="uid://d24esr3io35ew" path="res://assets/sprites/items/wings/Wing_Shoulder_L.png" id="1_lr4j3"]
+[ext_resource type="Texture2D" uid="uid://p5bspta2fpq6" path="res://assets/sprites/items/wings/Wings.png" id="1_sc0nq"]
+[ext_resource type="Texture2D" uid="uid://dqvjcfaeair1s" path="res://assets/sprites/items/wings/Wing_Middle_L.png" id="2_sc0nq"]
+[ext_resource type="Texture2D" uid="uid://7wxu6avjtdca" path="res://assets/sprites/items/wings/Wing_Shoulder_R.png" id="4_0a6ks"]
+[ext_resource type="Texture2D" uid="uid://dt5vff1ddw86a" path="res://assets/sprites/items/wings/Wing_Middle_R.png" id="5_wsy21"]
+[ext_resource type="AnimationNodeStateMachine" uid="uid://cr21x4ycbyina" path="res://assets/player/wings/Wings_Brain.tres" id="7_0a6ks"]
+
+[sub_resource type="Animation" id="Animation_t0m53"]
+resource_name = "wings_fly_active"
+length = 0.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Left_Wing_Skeleton/Bone_Shoulder_L:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.3490658503988659, 0.3490658503988659]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Left_Wing_Skeleton/Bone_Shoulder_L/Bone_Middle_L:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.6981317007977318, 0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Right_Wing_Skeleton/Bone_Shoulder_R:rotation")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.3490658503988659, -0.3490658503988659]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Right_Wing_Skeleton/Bone_Shoulder_R/Bone_Middle_R:rotation")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.6981317007977318, 0.0]
+}
+
+[sub_resource type="Animation" id="Animation_lr4j3"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Left_Wing_Skeleton/Bone_Shoulder_L:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Left_Wing_Skeleton/Bone_Shoulder_L/Bone_Middle_L:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Right_Wing_Skeleton/Bone_Shoulder_R:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Right_Wing_Skeleton/Bone_Shoulder_R/Bone_Middle_R:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Right_Wing_Skeleton/Bone_Shoulder_R:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.001),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Left_Wing_Skeleton/Bone_Shoulder_L:scale")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.001),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_sc0nq"]
+resource_name = "wings_fall"
+length = 1.2
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Left_Wing_Skeleton/Bone_Shoulder_L:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.4363323129985824, 0.3490658503988659]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Left_Wing_Skeleton/Bone_Shoulder_L/Bone_Middle_L:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.4363323129985824, -0.2617993877991494]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Right_Wing_Skeleton/Bone_Shoulder_R:rotation")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.4363323129985824, -0.3490658503988659]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Right_Wing_Skeleton/Bone_Shoulder_R/Bone_Middle_R:rotation")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.4363323129985824, 0.2617993877991494]
+}
+
+[sub_resource type="Animation" id="Animation_45f4j"]
+resource_name = "wings_hover_slow"
+length = 1.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Left_Wing_Skeleton/Bone_Shoulder_L:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.75),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, -0.3490658503988659]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Left_Wing_Skeleton/Bone_Shoulder_L/Bone_Middle_L:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.75),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.2617993877991494, -0.17453292519943295]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Right_Wing_Skeleton/Bone_Shoulder_R:rotation")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.75),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 0.3490658503988659]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Right_Wing_Skeleton/Bone_Shoulder_R/Bone_Middle_R:rotation")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.75),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.2617993877991494, 0.17453292519943295]
+}
+
+[sub_resource type="Animation" id="Animation_0a6ks"]
+resource_name = "wings_closed"
+length = 0.1
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Left_Wing_Skeleton/Bone_Shoulder_L:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.17453292519943295]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Left_Wing_Skeleton/Bone_Shoulder_L/Bone_Middle_L:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Right_Wing_Skeleton/Bone_Shoulder_R:rotation")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.17453292519943295]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Right_Wing_Skeleton/Bone_Shoulder_R/Bone_Middle_R:rotation")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Left_Wing_Skeleton/Bone_Shoulder_L:scale")
+tracks/4/interp = 2
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0.7, 0.7)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Right_Wing_Skeleton/Bone_Shoulder_R:scale")
+tracks/5/interp = 2
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0.7, 0.7)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0a6ks"]
+_data = {
+&"RESET": SubResource("Animation_lr4j3"),
+&"wings_closed": SubResource("Animation_0a6ks"),
+&"wings_fall": SubResource("Animation_sc0nq"),
+&"wings_fly_active": SubResource("Animation_t0m53"),
+&"wings_hover_slow": SubResource("Animation_45f4j")
+}
+
+[node name="Wings" type="Node2D" node_paths=PackedStringArray("_wingsBrain")]
+script = ExtResource("1_45f4j")
+_wingsBrain = NodePath("AnimationTree")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
+z_index = -2
+position = Vector2(-3, 15)
+texture = ExtResource("1_sc0nq")
+
+[node name="Left_Wing_Skeleton" type="Skeleton2D" parent="."]
+z_index = -2
+
+[node name="Bone_Shoulder_L" type="Bone2D" parent="Left_Wing_Skeleton"]
+rest = Transform2D(1, 0, 0, 1, 0, 0)
+
+[node name="L_Wing_Shoulder_Sprite" type="Sprite2D" parent="Left_Wing_Skeleton/Bone_Shoulder_L"]
+z_index = 1
+position = Vector2(21, -4)
+texture = ExtResource("1_lr4j3")
+
+[node name="Bone_Middle_L" type="Bone2D" parent="Left_Wing_Skeleton/Bone_Shoulder_L"]
+position = Vector2(27, -23)
+scale = Vector2(0.99999964, 0.99999964)
+rest = Transform2D(0.9999999, 0, 0, 0.9999999, 27, -23)
+auto_calculate_length_and_angle = false
+length = 65.0
+bone_angle = 83.0
+
+[node name="L_Wing_Middle_Sprite" type="Sprite2D" parent="Left_Wing_Skeleton/Bone_Shoulder_L/Bone_Middle_L"]
+z_index = 1
+position = Vector2(-5, 37.5)
+texture = ExtResource("2_sc0nq")
+
+[node name="Right_Wing_Skeleton" type="Skeleton2D" parent="."]
+z_index = -2
+position = Vector2(-3, 0)
+
+[node name="Bone_Shoulder_R" type="Bone2D" parent="Right_Wing_Skeleton"]
+rest = Transform2D(1, 0, 0, 1, 0, 0)
+
+[node name="R_Wing_Shoulder_Sprite" type="Sprite2D" parent="Right_Wing_Skeleton/Bone_Shoulder_R"]
+z_index = 1
+position = Vector2(-21, -4)
+texture = ExtResource("4_0a6ks")
+
+[node name="Bone_Middle_R" type="Bone2D" parent="Right_Wing_Skeleton/Bone_Shoulder_R"]
+position = Vector2(-27, -23)
+scale = Vector2(0.99999964, 0.99999964)
+rest = Transform2D(0.9999999, 0, 0, 0.9999999, -27, -23)
+auto_calculate_length_and_angle = false
+length = 65.0
+bone_angle = 96.99999
+
+[node name="R_Wing_Middle_Sprite" type="Sprite2D" parent="Right_Wing_Skeleton/Bone_Shoulder_R/Bone_Middle_R"]
+z_index = 1
+position = Vector2(5, 37.5)
+texture = ExtResource("5_wsy21")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_0a6ks")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = ExtResource("7_0a6ks")
+anim_player = NodePath("../AnimationPlayer")

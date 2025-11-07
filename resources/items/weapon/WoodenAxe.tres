@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=3 format=3 uid="uid://cunks3yos0h81"]
+
+[ext_resource type="PackedScene" uid="uid://cpsfjc85p6x6y" path="res://scenes/items/weapon/WoodenAxe.tscn" id="1_a6vsh"]
+[ext_resource type="Script" uid="uid://b3ocheuli6awv" path="res://scripts/data/WeaponData.cs" id="1_vg8g6"]
+
+[resource]
+script = ExtResource("1_vg8g6")
+Damage = 18
+AttackDuration = 0.2
+AttackAnimationName = "attack_axe"
+Type = 2
+WeaponScene = ExtResource("1_a6vsh")
+metadata/_custom_type_script = "uid://b3ocheuli6awv"

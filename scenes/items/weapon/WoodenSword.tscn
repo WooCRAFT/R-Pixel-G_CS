@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://btj0h3jc4uwet"]
+
+[ext_resource type="Texture2D" uid="uid://qpmj2rphlr1e" path="res://assets/sprites/items/weapon/wooden_sword.png" id="1_yu7po"]
+
+[node name="WoodenSword" type="Node2D"]
+
+[node name="Visual" type="Sprite2D" parent="."]
+position = Vector2(0, -21)
+texture = ExtResource("1_yu7po")
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Hitbox"]
+polygon = PackedVector2Array(2, 1, 2, -5, 6, -7, 11, -11, 11, -13, 10, -14, 7, -14, 6, -12, 5, -14, 5, -45, 1, -49, -1, -49, -5, -45, -5, -14, -6, -12, -7, -14, -10, -14, -11, -13, -11, -11, -6, -7, -2, -5, -2, 1, -4, 3, -4, 5, -2, 7, 2, 7, 4, 5, 4, 3)

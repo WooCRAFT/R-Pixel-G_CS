@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="WingsData" load_steps=2 format=3 uid="uid://txyt3cfo3nln"]
+
+[ext_resource type="Script" uid="uid://j0hvkdmlc8lf" path="res://scripts/data/WingsData.cs" id="1_pjie0"]
+
+[resource]
+script = ExtResource("1_pjie0")
+SlowFallSpeed = 30.0

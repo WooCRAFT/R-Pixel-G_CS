@@ -1,0 +1,77 @@
+[gd_scene load_steps=11 format=3 uid="uid://b6qvcihsaxj4g"]
+
+[ext_resource type="Script" uid="uid://dn6gheodhtv20" path="res://scripts/enemies/slime/Slime.cs" id="1_2hd65"]
+[ext_resource type="Texture2D" uid="uid://l74e8xpgwwd6" path="res://assets/sprites/enemies/blue slime.png" id="1_d12es"]
+[ext_resource type="Script" uid="uid://dp4vqa8d34y87" path="res://scripts/enemies/slime/SlimeStats.cs" id="3_u7i6e"]
+[ext_resource type="Script" uid="uid://rn3w0c8nl4xa" path="res://scripts/enemies/slime/SlimeAttack.cs" id="4_kvn5r"]
+[ext_resource type="Script" uid="uid://dy43ciqvlrn3f" path="res://scripts/enemies/slime/SlimeAnimation.cs" id="5_qvqow"]
+[ext_resource type="Texture2D" uid="uid://ct8bjed5ch6m3" path="res://assets/sprites/ui/Спрайт-003.png" id="6_q2u7j"]
+[ext_resource type="Texture2D" uid="uid://c7efrm5ovogx4" path="res://assets/sprites/ui/Спрайт-0001.png" id="7_4ni1i"]
+[ext_resource type="Texture2D" uid="uid://bbw3xggu2kg65" path="res://assets/sprites/ui/Спрайт-0002.png" id="8_dblny"]
+
+[sub_resource type="Animation" id="Animation_q2u7j"]
+resource_name = "slime_death"
+length = 0.8
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4ni1i"]
+_data = {
+&"slime_death": SubResource("Animation_q2u7j")
+}
+
+[node name="Slime" type="CharacterBody2D" groups=["enemies"]]
+collision_layer = 2
+collision_mask = 5
+script = ExtResource("1_2hd65")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_d12es")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+position = Vector2(0, -1.5)
+polygon = PackedVector2Array(22, -11.5, 26, -5.5, 29, 0.5, 28, 8.5, 28, 13.5, 22, 18.5, 13, 20.5, 2, 21.5, -10, 21.5, -20, 20.5, -27, 16.5, -29, 9.5, -29, 1.5, -26, -6.5, -22, -12.5, -15, -17.5, -9, -20.5, -1, -21.5, 8, -21.5, 15, -18.5)
+
+[node name="JumpTimer" type="Timer" parent="."]
+wait_time = 3.0
+autostart = true
+
+[node name="SlimeStats" type="Node" parent="." node_paths=PackedStringArray("healthBar")]
+script = ExtResource("3_u7i6e")
+healthBar = NodePath("../HealthBar")
+
+[node name="SlimeAttack" type="Node" parent="." node_paths=PackedStringArray("attackCooldownTimer")]
+script = ExtResource("4_kvn5r")
+attackCooldownTimer = NodePath("AttackCooldownTimer")
+
+[node name="AttackCooldownTimer" type="Timer" parent="SlimeAttack"]
+wait_time = 0.2
+one_shot = true
+
+[node name="SlimeAnimation" type="Node" parent="." node_paths=PackedStringArray("sprite2D")]
+script = ExtResource("5_qvqow")
+sprite2D = NodePath("../Sprite2D")
+
+[node name="HealthBar" type="TextureProgressBar" parent="."]
+offset_left = -32.0
+offset_top = -70.0
+offset_right = 32.0
+offset_bottom = -6.0
+value = 100.0
+texture_under = ExtResource("6_q2u7j")
+texture_over = ExtResource("7_4ni1i")
+texture_progress = ExtResource("8_dblny")
+
+[node name="SlimeAnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_4ni1i")
+}
+
+[node name="Touch_Hitbox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 5
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Touch_Hitbox"]
+polygon = PackedVector2Array(-16, 20, -4, 20, 10, 20, 21, 18, 28, 13, 29, 9, 29, -3, 25, -10, 15, -20, 8, -23, -8, -23, -18, -18, -27, -7, -30, 4, -29, 11, -25, 17)
+
+[connection signal="timeout" from="JumpTimer" to="." method="_on_jump_timer_timeout"]
+[connection signal="timeout" from="SlimeAttack/AttackCooldownTimer" to="SlimeAttack" method="_on_attack_cooldown_timer_timeout"]
+[connection signal="body_entered" from="Touch_Hitbox" to="." method="_on_touch_hitbox_body_entered"]

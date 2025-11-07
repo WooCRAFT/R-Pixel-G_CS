@@ -1,0 +1,53 @@
+[gd_resource type="AnimationNodeStateMachine" load_steps=18 format=3 uid="uid://cr21x4ycbyina"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_t0m53"]
+animation = &"wings_closed"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wsy21"]
+animation = &"wings_fall"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_mr1lg"]
+animation = &"wings_fly_active"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_3t677"]
+animation = &"wings_hover_slow"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_lr4j3"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_sc0nq"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_45f4j"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_0a6ks"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_wsy21"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_mr1lg"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_3t677"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_iy2b1"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_6ayaa"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_bmcrn"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_aj6mv"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_vvbdx"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_507ev"]
+advance_mode = 2
+
+[resource]
+states/Closed/node = SubResource("AnimationNodeAnimation_t0m53")
+states/Closed/position = Vector2(629, 100)
+states/Falling/node = SubResource("AnimationNodeAnimation_wsy21")
+states/Falling/position = Vector2(427, 36)
+states/Flying/node = SubResource("AnimationNodeAnimation_mr1lg")
+states/Flying/position = Vector2(360, 100)
+states/Hovering/node = SubResource("AnimationNodeAnimation_3t677")
+states/Hovering/position = Vector2(410, 177)
+states/Start/position = Vector2(237, 100)
+transitions = ["Closed", "Falling", SubResource("AnimationNodeStateMachineTransition_lr4j3"), "Falling", "Closed", SubResource("AnimationNodeStateMachineTransition_sc0nq"), "Closed", "Flying", SubResource("AnimationNodeStateMachineTransition_45f4j"), "Flying", "Closed", SubResource("AnimationNodeStateMachineTransition_0a6ks"), "Closed", "Hovering", SubResource("AnimationNodeStateMachineTransition_wsy21"), "Hovering", "Closed", SubResource("AnimationNodeStateMachineTransition_mr1lg"), "Flying", "Falling", SubResource("AnimationNodeStateMachineTransition_3t677"), "Falling", "Flying", SubResource("AnimationNodeStateMachineTransition_iy2b1"), "Flying", "Hovering", SubResource("AnimationNodeStateMachineTransition_6ayaa"), "Hovering", "Flying", SubResource("AnimationNodeStateMachineTransition_bmcrn"), "Falling", "Hovering", SubResource("AnimationNodeStateMachineTransition_aj6mv"), "Hovering", "Falling", SubResource("AnimationNodeStateMachineTransition_vvbdx"), "Start", "Flying", SubResource("AnimationNodeStateMachineTransition_507ev")]
+graph_offset = Vector2(195.12672, 0)

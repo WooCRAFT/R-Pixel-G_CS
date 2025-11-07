@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=3 format=3 uid="uid://d2rm5b18q7r8k"]
+
+[ext_resource type="Script" uid="uid://b3ocheuli6awv" path="res://scripts/data/WeaponData.cs" id="1_fpi6q"]
+[ext_resource type="PackedScene" uid="uid://btj0h3jc4uwet" path="res://scenes/items/weapon/WoodenSword.tscn" id="1_qan26"]
+
+[resource]
+script = ExtResource("1_fpi6q")
+Damage = 25
+AttackAnimationName = "attack_sword"
+Type = 1
+WeaponScene = ExtResource("1_qan26")
+metadata/_custom_type_script = "uid://b3ocheuli6awv"
