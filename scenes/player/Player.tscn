@@ -2130,9 +2130,11 @@ animationTree = NodePath("AnimationTree")
 skeleton = NodePath("CharacterSkeleton")
 mainCollision = NodePath("CollisionPolygon2D")
 _wingsMount = NodePath("CharacterSkeleton/RootBone/TorsoBone/Wings_Mount")
+_headMount = NodePath("CharacterSkeleton/RootBone/TorsoBone/HeadBone/HeadMountPoint")
 _equippedWings = SubResource("Resource_v5i4m")
 _headScene = ExtResource("4_v5i4m")
-_headMount = NodePath("CharacterSkeleton/RootBone/TorsoBone/HeadBone/HeadMountPoint")
+_moveSpeed = 250.0
+_brakingForce = 850.0
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 visible = false
@@ -2197,7 +2199,7 @@ texture = ExtResource("7_8qjgm")
 
 [node name="LowerArmBone_R" type="Bone2D" parent="CharacterSkeleton/RootBone/TorsoBone/UpperArmBone_R"]
 position = Vector2(-4, 14)
-scale = Vector2(0.9999981, 0.9999981)
+scale = Vector2(0.9999974, 0.9999974)
 rest = Transform2D(0.99999964, 0, 0, 0.99999964, -4, 14)
 auto_calculate_length_and_angle = false
 length = 14.0
@@ -2228,7 +2230,7 @@ texture = ExtResource("5_8qjgm")
 
 [node name="UpperArmBone_L" type="Bone2D" parent="CharacterSkeleton/RootBone/TorsoBone"]
 position = Vector2(13, -18)
-scale = Vector2(0.9999973, 0.9999973)
+scale = Vector2(0.99999726, 0.99999726)
 rest = Transform2D(0.9999992, 0, 0, 0.9999992, 13, -18)
 editor_settings/show_bone_gizmo = false
 
@@ -2239,7 +2241,7 @@ texture = ExtResource("10_pi3ps")
 
 [node name="LowerArmBone_L" type="Bone2D" parent="CharacterSkeleton/RootBone/TorsoBone/UpperArmBone_L"]
 position = Vector2(-1, 10)
-scale = Vector2(0.9999981, 0.9999981)
+scale = Vector2(0.9999974, 0.9999974)
 rest = Transform2D(0.99999946, 0, 0, 0.99999946, -1, 10)
 auto_calculate_length_and_angle = false
 length = 14.0
@@ -2267,7 +2269,7 @@ editor_settings/show_bone_gizmo = false
 
 [node name="UpperLegBone_R" type="Bone2D" parent="CharacterSkeleton/RootBone/HipBone_R"]
 position = Vector2(0, -2.3841858e-07)
-scale = Vector2(0.99999774, 0.99999774)
+scale = Vector2(0.9999975, 0.9999975)
 rest = Transform2D(0.99999946, 0, 0, 0.99999946, 0, -2.3841858e-07)
 auto_calculate_length_and_angle = false
 length = 14.0
@@ -2302,7 +2304,7 @@ editor_settings/show_bone_gizmo = false
 
 [node name="UpperLegBone_L" type="Bone2D" parent="CharacterSkeleton/RootBone/HipBone_L"]
 position = Vector2(0, 1.1368684e-13)
-scale = Vector2(0.99999774, 0.99999774)
+scale = Vector2(0.9999975, 0.9999975)
 rest = Transform2D(0.99999946, 0, 0, 0.99999946, 0, 1.1368684e-13)
 auto_calculate_length_and_angle = false
 length = 14.0
@@ -2337,6 +2339,7 @@ weaponHolderPath = NodePath("../CharacterSkeleton/RootBone/TorsoBone/UpperArmBon
 
 [node name="PlayerStats" type="Node" parent="."]
 script = ExtResource("13_20koh")
+MaxHealth = 150
 
 [node name="IdleAnimationHandler" type="Node" parent="."]
 script = ExtResource("17_ejd4k")
@@ -2360,7 +2363,7 @@ parameters/Locomotion/Ground_Air_Switch/blend_amount = 1.0
 parameters/Locomotion/Wings_Direction_Switch/blend_amount = 1.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(1.5, 1.5)
+zoom = Vector2(0.7, 0.7)
 limit_enabled = false
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

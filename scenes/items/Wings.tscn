@@ -351,7 +351,7 @@ texture = ExtResource("3_ltuwn")
 
 [node name="Bone_Middle_L" type="Bone2D" parent="Left_Wing_Skeleton/Bone_Shoulder_L"]
 position = Vector2(27, -23)
-scale = Vector2(0.99999964, 0.99999964)
+scale = Vector2(0.9999996, 0.9999996)
 rest = Transform2D(0.9999999, 0, 0, 0.9999999, 27, -23)
 auto_calculate_length_and_angle = false
 length = 65.0
@@ -376,11 +376,11 @@ texture = ExtResource("5_360qo")
 
 [node name="Bone_Middle_R" type="Bone2D" parent="Right_Wing_Skeleton/Bone_Shoulder_R"]
 position = Vector2(-27, -23)
-scale = Vector2(0.99999964, 0.99999964)
+scale = Vector2(0.9999996, 0.9999996)
 rest = Transform2D(0.9999999, 0, 0, 0.9999999, -27, -23)
 auto_calculate_length_and_angle = false
 length = 65.0
-bone_angle = 96.999985
+bone_angle = 96.99998
 
 [node name="R_Wing_Middle_Sprite" type="Sprite2D" parent="Right_Wing_Skeleton/Bone_Shoulder_R/Bone_Middle_R"]
 z_index = 1

@@ -1,12 +1,12 @@
 [gd_scene load_steps=12 format=3 uid="uid://soopr2v4ywxe"]
 
-[ext_resource type="Script" path="res://example/example.gd" id="1_efwug"]
+[ext_resource type="Script" uid="uid://pfyylr1glem2" path="res://example/example.gd" id="1_efwug"]
 [ext_resource type="Shader" uid="uid://ceglme3e12f8l" path="res://example/background.tres" id="1_shlvx"]
-[ext_resource type="Script" path="res://addons/uiJuicer/timed_label.gd" id="2_0bytx"]
+[ext_resource type="Script" uid="uid://cqvaxwgwnmum0" path="res://addons/uiJuicer/timed_label.gd" id="2_0bytx"]
 [ext_resource type="AudioStream" uid="uid://cn0viqdkjw7e" path="res://example/keyboard.wav" id="3_ebcsy"]
-[ext_resource type="Script" path="res://addons/uiJuicer/fadeLabel.gd" id="3_mu5to"]
-[ext_resource type="Script" path="res://addons/uiJuicer/bounce_button.gd" id="5_uwo53"]
-[ext_resource type="Script" path="res://addons/uiJuicer/Fader.gd" id="6_nqsnq"]
+[ext_resource type="Script" uid="uid://d1mdyyblmdogw" path="res://addons/uiJuicer/fadeLabel.gd" id="3_mu5to"]
+[ext_resource type="Script" uid="uid://bn2k1nvd56tr" path="res://addons/uiJuicer/bounce_button.gd" id="5_uwo53"]
+[ext_resource type="Script" uid="uid://d2u4ydvtse3tj" path="res://addons/uiJuicer/Fader.gd" id="6_nqsnq"]
 
 [sub_resource type="Gradient" id="Gradient_ymqo5"]
 offsets = PackedFloat32Array(0.352459, 1)
@@ -18,9 +18,9 @@ frequency = 0.0026
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wdguw"]
 width = 1024
 height = 1024
-seamless = true
-color_ramp = SubResource("Gradient_ymqo5")
 noise = SubResource("FastNoiseLite_1br2n")
+color_ramp = SubResource("Gradient_ymqo5")
+seamless = true
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_buoo7"]
 shader = ExtResource("1_shlvx")

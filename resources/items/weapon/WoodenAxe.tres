@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("1_vg8g6")
 Damage = 18
-AttackDuration = 0.2
+AttackDuration = 0.6
 AttackAnimationName = "attack_axe"
 Type = 2
 WeaponScene = ExtResource("1_a6vsh")

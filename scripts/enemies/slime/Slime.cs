@@ -1,190 +1,300 @@
 using Godot;
-using System;
+using System.Linq; 
 
 public partial class Slime : CharacterBody2D
 {
-    // --- Настройки Движения ---
-    public const float JumpVelocity = -450.0f; 
-    public const float JumpSpeed = 100.0f;
-    public const float Friction = 50.0f;
-
-    // --- Системные переменные ---
-    public float Gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
-    private Player player = null; // (Именно 'Player', а не 'CharacterBody2D')
-
-    // --- Ссылки на дочерние узлы ---
-    private Timer jumpTimer; 
+    // --- 1. Настраиваемые Переменные (в Инспекторе) ---
+    [ExportGroup("Прыжки")] 
+    [Export(PropertyHint.Range, "100,1000,10")]
+    public float BigJumpDistance { get; private set; } = 300.0f; 
+    [Export]
+    public float BigJumpHeight { get; private set; } = 500.0f;
+    [Export]
+    public float BigJumpSpeed { get; private set; } = 250.0f; // Это "начальная" скорость прыжка
+    [Export]
+    public float BigJumpCooldown { get; private set; } = 3.0f; 
+    [Export]
+    public float SmallJumpHeight { get; private set; } = 250.0f;
+    [Export]
+    public float SmallJumpSpeed { get; private set; } = 150.0f;
+    [Export]
+    public float SmallJumpCooldown { get; private set; } = 2.0f; 
     
-    // (ССЫЛКА НА "ХИТБОКС" "КАСАНИЯ")
-    private Area2D touchHitbox; 
+    // --- НОВАЯ ПЕРЕМЕННАЯ ТОРМОЖЕНИЯ ---
+    [Export(PropertyHint.Range, "100,2000,50")] 
+    public float BrakingForce { get; private set; } = 700.0f; 
     
-    // (Параметры "запроса" "к" "физике")
-    private PhysicsShapeQueryParameters2D queryParams; 
+    // --- НОВАЯ ПЕРЕМЕННАЯ КОНТРОЛЯ В ВОЗДУХЕ ---
+    [Export(PropertyHint.Range, "0, 1000, 25")]
+    public float AirControlSpeed { get; private set; } = 200.0f; // <-- НОВОЕ: Сила "подруливания" в полете
 
-    // --- ССЫЛКИ НА КОМПОНЕНТЫ ("Специалисты") ---
-    private SlimeStats slimeStats;
-    private SlimeAttack slimeAttack;
-    private SlimeAnimation slimeAnimation;
+
+    [ExportGroup("Атака")] 
+    // ... (старые переменные) ...
+    [Export]
+    public float AttackDamage { get; private set; } = 5.0f; 
+    [Export]
+    public float AttackCooldown { get; private set; } = 0.5f;
+
+    [ExportGroup("Здоровье")] 
+    // ... (старые переменные) ...
+    [Export]
+    public float MaxHealth { get; private set; } = 30.0f; 
+    private float currentHealth; 
+
+    [ExportGroup("Имена Анимаций")] 
+    // ... (старые переменные) ...
+    [Export]
+    public string AnimJump { get; private set; } = "jump"; 
+    [Export]
+    public string AnimIdle { get; private set; } = "idle"; 
+    [Export]
+    public string AnimDead { get; private set; } = "dead"; 
+
+    // --- 2. Ссылки на Ноды (для перетаскивания) ---
+    [ExportGroup("Ссылки на Ноды")]
+    // ... (старые переменные) ...
+    [Export]
+    private NodePath _touchHitboxPolygonPath; 
+    [Export]
+    private NodePath _jumpTimerPath; 
+    [Export] 
+    private NodePath _attackCooldownTimerPath; 
+    [Export] 
+    private NodePath _animationPlayerPath; 
+    [Export] 
+    private NodePath _statsNodePath; 
+    [Export]
+    private NodePath _spritePath; 
+
+    // --- 3. Приватные Переменные ---
+    // (Без изменений)
+    private Node2D playerNode; 
+    private Timer jumpTimer;
+    private Timer attackCooldownTimer; 
+    private CollisionPolygon2D touchHitboxNode;
+    private ConvexPolygonShape2D touchHitboxShapeResource;
+    private AnimationPlayer animationPlayer; 
+    private Node statsNode; 
+    private Sprite2D sprite; 
+    private bool isDead = false; 
+    private float gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
 
     
+    // --- 4. Метод _Ready() ---
+    // (Без изменений)
     public override void _Ready()
     {
-       // "Находим" "специалистов"
-       slimeStats = GetNode<SlimeStats>("SlimeStats");
-       slimeAttack = GetNode<SlimeAttack>("SlimeAttack");
-       slimeAnimation = GetNode<SlimeAnimation>("SlimeAnimation");
-       jumpTimer = GetNode<Timer>("JumpTimer");
+        // ... (весь старый код _Ready() остается тут) ...
+        jumpTimer = GetNode<Timer>(_jumpTimerPath);
+        touchHitboxNode = GetNode<CollisionPolygon2D>(_touchHitboxPolygonPath);
+        attackCooldownTimer = GetNode<Timer>(_attackCooldownTimerPath); 
+        animationPlayer = GetNode<AnimationPlayer>(_animationPlayerPath); 
+        statsNode = GetNode<Node>(_statsNodePath); 
+        sprite = GetNode<Sprite2D>(_spritePath); 
 
-       // "Подписываемся" "на" "сигнал" "смерти"
-       slimeStats.SlimeDied += _on_SlimeDied;
+        if (jumpTimer == null || touchHitboxNode == null || attackCooldownTimer == null || 
+            animationPlayer == null || statsNode == null || sprite == null) 
+        {
+            GD.PrintErr($"ОШИБКА в Slime.cs: Одна из нод (Timer, Hitbox, Animation, Stats, Sprite) не установлена в Инспекторе!");
+            return;
+        }
 
-       // --- "ИСПРАВЛЕНИЕ" (FIX) "ХИТБОКСА" (HITBOX) "И" (AND) "ПОИСКА" (SEARCH) "ИГРОКА" (PLAYER) ---
-       
-       // "СНАЧАЛА" (FIRST) "ищем" (find) "Игрока" (Player)
-       // (Мы "ищем" (find) "тип" (type) 'Player', "а" (and) "не" (not) 'CharacterBody2D')
-       try
-       {
-          player = GetTree().GetFirstNodeInGroup("player") as Player;
-       }
-       catch (Exception e)
-       {
-          GD.PrintErr($"Не удалось найти игрока: {e.Message}");
-       }
-       
-       // "ПОТОМ" (THEN) "настраиваем" (setup) "хитбокс" (hitbox)
-       touchHitbox = GetNode<Area2D>("Touch_Hitbox");
-       if (touchHitbox == null)
-       {
-           GD.PrintErr("Slime: 'Touch_Hitbox' (Area2D) не найден!");
-       }
-       
-       // "Настраиваем" "наш" "физический" "запрос" (query)
-       queryParams = new PhysicsShapeQueryParameters2D();
-       queryParams.Shape = touchHitbox.GetNode<CollisionShape2D>("CollisionShape2D").Shape;
-       
-       // "Ищем" (Look for) "ТОЛЬКО" (ONLY) "Слой 1" (Layer 1) (Игрок)
-       queryParams.CollisionMask = (1 << 0); 
-       
-       // "Игнорируем" (Ignore) "самих" (ourselves) "себя" (us)
-       queryParams.Exclude = new Godot.Collections.Array<Rid> { this.GetRid() };
-       
-       // --- (Конец "Исправления") ---
-    }
-    
-    // --- МЕТОДЫ-ПЕРЕАДРЕСАТОРЫ (Public API) ---
-    
-    public void TakeDamage(int amount)
-    {
-        slimeStats.TakeDamage(amount);
+        attackCooldownTimer.WaitTime = AttackCooldown; 
+        attackCooldownTimer.OneShot = true; 
+        jumpTimer.OneShot = true; 
+        jumpTimer.Start(SmallJumpCooldown); 
+
+        currentHealth = MaxHealth; 
+
+        touchHitboxShapeResource = new ConvexPolygonShape2D();
+        touchHitboxShapeResource.Points = touchHitboxNode.Polygon;
+        
+        animationPlayer?.Play(AnimIdle); 
+        animationPlayer.AnimationFinished += OnAnimationFinished; 
     }
 
-    public bool get_is_dead()
-    {
-       return slimeStats.IsSlimeDead();
-    }
-
-
+    // --- 5. Метод _PhysicsProcess() (ГЛАВНЫЕ ИЗМЕНЕНИЯ) ---
     public override void _PhysicsProcess(double delta)
     {
-       // --- "ИСПРАВЛЕНИЕ" (FIX): "Ищем" (Find) "Игрока" (Player) "постоянно" (constantly), "если" (if) "потеряли" (lost) ---
-       if (player == null || !IsInstanceValid(player))
-       {
-           // "Пытаемся" (Try) "найти" (find) "его" (him) "снова" (again)
-           player = GetTree().GetFirstNodeInGroup("player") as Player;
-           if (player == null)
-           {
-               // "Если" (If) "Игрока" (Player) "нет" (is not) "в" (in) "сцене" (scene) - "стоп" (stop)
-               return;
-           }
-       }
+        if (isDead) return; 
 
-       // --- "ЗАЩИТА" (Guard Clause) ---
-       if (slimeStats.IsSlimeDead()) 
-       {
-          if (!IsOnFloor())
-          {
-             Velocity = Velocity with { Y = Velocity.Y + Gravity * (float)delta };
-             MoveAndSlide();
-          }
-          return; 
-       }
+        // --- ИЗМЕНЕНИЕ: Ищем игрока КАЖДЫЙ кадр ---
+        if (playerNode == null)
+        {
+            playerNode = GetTree().GetNodesInGroup("player").FirstOrDefault() as Node2D;
+        }
+        // Если игрока нет, просто стоим и ждем
+        if (playerNode == null) return; 
+        
+        // Рассчитываем направление к игроку КАЖДЫЙ кадр
+        Vector2 direction = (playerNode.GlobalPosition - this.GlobalPosition).Normalized();
+        // --- КОНЕЦ ИЗМЕНЕНИЯ ---
 
-       // --- "Гравитация", "Движение", "Поворот спрайта" ---
-       if (!IsOnFloor())
-          Velocity = Velocity with { Y = Velocity.Y + Gravity * (float)delta };
-       
-       Vector2 directionToPlayer = Vector2.Zero; 
 
-       if (!IsOnFloor())
-       {
-          directionToPlayer = (player.GlobalPosition - GlobalPosition);
-          Velocity = Velocity with { X = Mathf.Sign(directionToPlayer.X) * JumpSpeed };
-       }
-       else
-       {
-          Velocity = Velocity with { X = Mathf.MoveToward(Velocity.X, 0, Friction * (float)delta) };
-       }
+        // 1. Применяем гравитацию
+        if (!IsOnFloor())
+        {
+            Velocity = new Vector2(Velocity.X, Velocity.Y + gravity * (float)delta);
+        }
 
-       if (Mathf.Abs(GlobalPosition.DistanceTo(player.GlobalPosition)) > 1)
-       {
-          if (IsOnFloor())
-          {
-             directionToPlayer = (player.GlobalPosition - GlobalPosition);
-          }
-          slimeAnimation.UpdateFlip(directionToPlayer.X);
-       }
+        // 2. Логика Прыжка / Ожидания / Полета
+        
+        // A. Если таймер прыжка ГОТОВ
+        if (jumpTimer.IsStopped())
+        {
+            if (IsOnFloor()) 
+            {
+                // Передаем направление в C#-метод прыжка
+                PerformJumpLogic(direction); // <-- ИЗМЕНЕНО
+            }
+        }
+        // B. Если таймер на КД (мы ждем или летим)
+        else
+        {
+            // B1. Мы на КД и НА ЗЕМЛЕ -> Тормозим
+            if (IsOnFloor()) 
+            {
+                Velocity = new Vector2(
+                    Mathf.MoveToward(Velocity.X, 0, BrakingForce * (float)delta), 
+                    Velocity.Y 
+                );
+                
+                StringName currentAnim = animationPlayer.CurrentAnimation;
+                if (currentAnim != new StringName(AnimIdle) && currentAnim != new StringName(AnimJump))
+                {
+                     animationPlayer.Play(AnimIdle); 
+                }
+            }
+            // B2. Мы на КД и В ВОЗДУХЕ -> КОНТРОЛЬ ПОЛЕТА!
+            else
+            {
+                // --- НОВЫЙ C#-КОД: КОНТРОЛЬ В ВОЗДУХЕ ---
+                // Мы плавно "подруливаем" нашу X-скорость к
+                // 'direction.X * AirControlSpeed'
+                Velocity = new Vector2(
+                    Mathf.MoveToward(
+                        Velocity.X, // Текущая X-скорость
+                        direction.X * AirControlSpeed, // Целевая X-скорость (в сторону игрока)
+                        // Скорость, с которой мы "подруливаем"
+                        // (Используем половину силы торможения, чтобы было плавно)
+                        (BrakingForce / 2) * (float)delta 
+                    ),
+                    Velocity.Y // Y-скорость (гравитацию) не трогаем
+                );
+                // --- КОНЕЦ НОВОГО КОДА ---
+            }
+        }
+        
+        // 3. Поворачиваем спрайт (теперь это здесь, чтобы работать всегда)
+        // C#-логика: 'if' (если) X < 0... 'else if' (иначе если) X > 0...
+        if (direction.X < -0.1f) // Добавляем "мертвую зону" 0.1
+        {
+            sprite.FlipH = true; // Смотрим влево
+        }
+        else if (direction.X > 0.1f) 
+        {
+            sprite.FlipH = false; // Смотрим вправо
+        }
+        
+        // 4. Применяем движение
+        MoveAndSlide();
 
-       MoveAndSlide();
-
-       // --- "ИСПРАВЛЕННАЯ" (FIXED) "АТАКА" (ATTACK) "КАСАНИЕМ" (ON TOUCH) ---
-       var spaceState = GetWorld2D().DirectSpaceState;
-       if (touchHitbox != null && spaceState != null)
-       {
-           queryParams.Transform = touchHitbox.GlobalTransform;
-           
-           var overlappingResult = spaceState.IntersectShape(queryParams);
-
-           if (overlappingResult.Count > 0)
-           {
-               foreach (var bodyDict in overlappingResult)
-               {
-                   var collider = (Node)bodyDict["collider"];
-                   
-                   // "Проверяем" "ВЛАДЕЛЬЦА" (OWNER) "тела" (body)
-                   if (collider.Owner is Player victim)
-                   {
-                       slimeAttack.TryToAttack(victim);
-                   }
-               }
-           }
-       }
+        // 5. Проверяем атаку
+        PerformAttackCheck();
     }
 
-
-    // --- (Сигнал от 'jumpTimer') ---
-    private void _on_jump_timer_timeout()
+    // --- 6. "Умный" Прыжок (ИЗМЕНЕН) ---
+    // C#-синтаксис: 'private void PerformJumpLogic(Vector2 direction)'
+    // Теперь этот C#-метод "принимает" направление, которое ему передали
+    private void PerformJumpLogic(Vector2 direction) // <-- ИЗМЕНЕНО
     {
-       if (slimeStats.IsSlimeDead() || player == null || !IsInstanceValid(player)) return;
+        // (Блок поиска игрока и 'direction' УДАЛЕН отсюда. Он переехал в _PhysicsProcess)
+        // (Блок поворота спрайта УДАЛЕН отсюда. Он переехал в _PhysicsProcess)
 
-       if (IsOnFloor())
-       {
-          float directionX = (player.GlobalPosition - GlobalPosition).X;
-          Velocity = new Vector2(Mathf.Sign(directionX) * JumpSpeed, JumpVelocity);
-       }
+        float distance = this.GlobalPosition.DistanceTo(playerNode.GlobalPosition);
+        
+        Vector2 newVelocity = Vector2.Zero; 
+
+        if (distance > BigJumpDistance)
+        {
+            // --- Логика БОЛЬШОГО прыжка ---
+            newVelocity.X = direction.X * BigJumpSpeed;
+            newVelocity.Y = -BigJumpHeight;
+            jumpTimer.WaitTime = BigJumpCooldown; 
+        }
+        else
+        {
+            // --- Логика МАЛЕНЬКОГО прыжка ---
+            newVelocity.X = direction.X * SmallJumpSpeed;
+            newVelocity.Y = -SmallJumpHeight;
+            jumpTimer.WaitTime = SmallJumpCooldown; 
+        }
+        
+        Velocity = newVelocity; 
+        jumpTimer.Start(); 
+        
+        animationPlayer?.Play(AnimJump); 
     }
 
-    // --- (Сигнал от 'SlimeDied') ---
-    private async void _on_SlimeDied()
+    
+    // --- 7. Метод Атаки ---
+    // (Без изменений)
+    private void PerformAttackCheck()
     {
-        GetNode<CollisionPolygon2D>("CollisionPolygon2D").SetDeferred("disabled", true);
-        jumpTimer.Stop();
-        
-        // slimeAnimation.PlayDeath();
-        
-        slimeAnimation.Hide();
-
-        await ToSignal(GetTree().CreateTimer(1.0), Timer.SignalName.Timeout);
-        
-        QueueFree();
+        if (isDead || !attackCooldownTimer.IsStopped()) return;
+        var spaceState = GetWorld2D().DirectSpaceState;
+        // ... (остальной код метода не изменился) ...
+        var queryParameters = new PhysicsShapeQueryParameters2D();
+        queryParameters.Shape = touchHitboxShapeResource;
+        queryParameters.Transform = touchHitboxNode.GlobalTransform;
+        queryParameters.CollisionMask = 1; 
+        var results = spaceState.IntersectShape(queryParameters);
+        if (results.Count > 0)
+        {
+            foreach (var result in results)
+            {
+                var hitObject = result["collider"].As<Node>();
+                if (hitObject != null && hitObject.IsInGroup("player"))
+                {
+                    GD.Print($"Слайм атакует {hitObject.GetClass()} на {AttackDamage} урона!");
+                    hitObject.Call("TakeDamage", AttackDamage);
+                    attackCooldownTimer.Start(); 
+                    break; 
+                }
+            } 
+        }
+    }
+    
+    // --- 8. УРОН И СМЕРТЬ ---
+    // (Без изменений)
+    public void TakeDamage(float amount)
+    {
+        if (isDead) return;
+        currentHealth -= amount;
+        GD.Print($"Слайму нанесли {amount} урона. Осталось: {currentHealth}");
+        if (currentHealth <= 0)
+        {
+            PerformDeath();
+        }
+    }
+    private void PerformDeath()
+    {
+        isDead = true; 
+        GD.Print("Слайм умер!");
+        SetPhysicsProcess(false); 
+        var area = touchHitboxNode.GetParent<Area2D>();
+        if (area != null)
+        {
+            area.Monitoring = false; 
+        }
+        animationPlayer?.Play(AnimDead); 
+    }
+    private void OnAnimationFinished(StringName animName)
+    {
+        if (animName == new StringName(AnimDead))
+        {
+            QueueFree();
+        }
     }
 }

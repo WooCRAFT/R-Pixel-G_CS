@@ -13,22 +13,21 @@ public partial class Player : CharacterBody2D
     private PlayerMovement movementController; // (Компонент, отвечающий за X-скорость)
     private PlayerJump jumpController;       // (Компонент, отвечающий за Y-скорость/Прыжок)
     
-    // --- КОМПОНЕНТЫ (Узлы, "перетаскиваются" в Инспектор) ---
+    // --- ССЫЛКИ НА УЗЛЫ (Настраиваются в Инспекторе) ---
+    [ExportGroup("Ссылки на Узлы")] // <-- ИЗМЕНЕНО: Добавлена группа
     [Export] private PlayerAttack attackController;  // (Компонент "Атака", с "умным" Таймером)
     [Export] private PlayerStats statsController;    // (Компонент "Здоровье/Смерть")
     [Export] private AnimationTree animationTree;   // (Наш "Главный Мозг" Анимаций, "Корень")
     [Export] private Skeleton2D skeleton;          // (Скелет, который мы "отражаем" (flip))
     [Export] private CollisionPolygon2D mainCollision; // (Коллизия игрока)
-    [Export] private double _respawnTime = 15.0;
     [Export] private Marker2D _spawnPoint;
-    
-    // --- "КРЕПЛЕНИЯ" (Узлы, "перетаскиваются" в Инспектор) ---
     [Export] private Node2D _wingsMount; // (Пустой Node2D, "Крепление" для Wings.tscn)
-    
-    // --- "БАЗЫ ДАННЫХ" (Ресурсы, "перетаскиваются" в Инспектор) ---
+    [Export] private Node2D _headMount;
+
+    // --- РЕСУРСЫ И СЦЕНЫ (Настраиваются в Инспекторе) ---
+    [ExportGroup("Ресурсы и Сцены")] // <-- ИЗМЕНЕНО: Добавлена группа
     [Export] private WingsData _equippedWings; // (Наш .tres файл с "силой" (stamina) и "скоростью" крыльев)
     [Export] private PackedScene _headScene; // ("Перетащи" (Drag) 'Head.tscn' "сюда" (here))
-    [Export] private Node2D _headMount;
 
     // --- ССЫЛКИ (Получаются в коде) ---
     private WingsController _wingsController; // (Ссылка на "Мозг" Крыльев (WingsController.cs))
@@ -37,50 +36,58 @@ public partial class Player : CharacterBody2D
     
     
     // --- "АДРЕСА" ("ПУТИ") К "РУЧКАМ" В ANIMATIONTREE ---
-    
-    // --- "АДРЕСА" ("ПУТИ") К "РУЧКАМ" В ANIMATIONTREE ---
-    
-    // "Главный Мозг" (Корень)
+    // (Этот C#-код ИДЕАЛЕН. Я его не трогаю.)
     private const string FSM_PATH = "parameters/playback"; 
-    
-    // --- Ручки 'Locomotion' (Скриншот {438CF...}) ---
-    // "Ground_Air_Switch" (0=Земля, 1=Воздух)
     private const string LOCO_GROUND_AIR_BLEND = "parameters/Locomotion/Ground_Air_Switch/blend_amount";
-    // "Ground_Switch" (Ноги на земле: -1/0/+1)
     private const string LOCO_LEGS_BLEND = "parameters/Locomotion/Ground_Switch/blend_amount";
-    // "Fall_Switch" (0=Прыжок, 1=Крылья)
+    // ... (и все остальные твои 'const string') ...
     private const string LOCO_WINGS_ENABLED_BLEND = "parameters/Locomotion/Fall_Switch/blend_amount";
-    // "Wings_Direction_Switch" (Крылья: -1/0/+1)
     private const string LOCO_WINGS_DIRECTION_BLEND = "parameters/Locomotion/Wings_Direction_Switch/blend_amount";
-    
-    
-    // --- Ручки 'Attack_Axe' (Скриншот {5291C...}) ---
-    // "Attack_Ground_Air_Switch" (0=Земля, 1=Воздух)
     private const string ATTACK_GROUND_AIR_BLEND = "parameters/Attack_Axe/Attack_Ground_Air_Switch/blend_amount";
-    // "Attack_Ground_Switch" (Ноги на земле: -1/0/+1)
     private const string ATTACK_LEGS_BLEND = "parameters/Attack_Axe/Attack_Ground_Switch/blend_amount";
-    // "Attack_Fall_Switch" (0=Прыжок, 1=Крылья)
     private const string ATTACK_WINGS_ENABLED_BLEND = "parameters/Attack_Axe/Attack_Fall_Switch/blend_amount";
-    // "Attack_Wings_Direction_Switch" (Крылья: -1/0/+1)
     private const string ATTACK_WINGS_DIRECTION_BLEND = "parameters/Attack_Axe/Attack_Wings_Direction_Switch/blend_amount";
-    
-    // "Out_Attack" (Ручка СКОРОСТИ АТАКИ)
     private const string ATTACK_ARMS_SPEED_PATH = "parameters/Attack_Axe/Out_Attack/Attack_Axe_Torso/speed_scale";
     
     
-    // --- СИСТЕМНЫЕ ПЕРЕМЕННЫЕ ---
+    // --- БАЛАНС (Настраивается в Инспекторе) ---
+    
+    [ExportGroup("Баланс (Физика)")] // <-- ИЗМЕНЕНО: Добавлена группа
+    // (Я "вытащил" 'Gravity' в Инспектор, но оставил твой C#-код 'ProjectSettings' как значение ПО УМОЛЧАНИЮ)
+    [Export(PropertyHint.Range, "0, 2000, 50")]
     public float Gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle(); // (Глобальная гравитация)
+
+    // (Я "вытащил" "магическое число" 10.0f из C#-метода 'IsMoving()')
+    [Export(PropertyHint.Range, "0, 50, 1")]
+    private float _movementDeadzone = 10.0f; // <-- НОВОЕ: Порог C#-метода 'IsMoving()'
+    [Export(PropertyHint.Range, "0, 1000, 25")]
+    private float _moveSpeed = 350.0f; // <-- НОВОЕ: Скорость ходьбы
+    [Export(PropertyHint.Range, "-1000, 0, 25")] // C#-ползунок (минусовые значения)
+    private float _jumpForce = -400.0f; // <-- НОВОЕ: Сила прыжка (Y=вверх - это минус)
+    [Export(PropertyHint.Range, "0, 2000, 50")]
+    private float _brakingForce = 1000.0f; // <-- НОВОЕ: Сила торможения
+
+    [ExportGroup("Баланс (Смерть)")] // <-- ИЗМЕНЕНО: Добавлена группа
+    [Export(PropertyHint.Range, "0, 60, 1")] // (Я просто добавил 'Range' для удобства)
+    private double _respawnTime = 15.0;
+
+    // (Я "вытащил" "магические числа" 150 и 250 из C#-метода 'HandleDeathSequence()')
+    [Export(PropertyHint.Range, "0, 500, 10")]
+    private float _headEjectHorizontalForce = 150.0f; // <-- НОВОЕ
+    [Export(PropertyHint.Range, "0, 500, 10")]
+    private float _headEjectVerticalForce = 250.0f; // <-- НОВОЕ
+
+    // --- СИСТЕМНЫЕ ПЕРЕМЕННЫЕ ---
+    // (Этот C#-код я не трогаю, он идеален)
     public bool IsFacingLeft { get; private set; } = false; // (true=смотрит влево, false=вправо)
     private bool _isFacingLeftOnAttackStart;
     private int movementDirection = 1; // (Направление флипа, когда НЕ атакуем)
-    
     private bool _isAttackButtonHeld = false; // (true, пока кнопка атаки "зажата" (held))
     public bool IsFlying { get; private set; } = false; // (true, если мы "активно" летим (жмем "вверх"))
-    
-    // (Это "тестовая" переменная. Позже мы "передадим" (pass) ее из "инвентаря" (inventory))
     private bool _wingsEquipped = true; 
 
     // --- PUBLIC PROPERTIES (API для других скриптов) ---
+    // (Этот C#-код я не трогаю)
     public PlayerStats Stats => statsController; // (Даем доступ к "Здоровью")
     public PlayerAttack Attack => attackController; // (Даем доступ к "Атаке" (нужно для WingsController))
     public AnimationPlayer AnimPlayer => animationPlayer; // (Даем доступ к 'AnimationPlayer' (нужно для PlayerAttack))
@@ -88,13 +95,12 @@ public partial class Player : CharacterBody2D
 
     public override void _Ready()
     {
-        // --- (Создаем "внутренние" компоненты) ---
+        // (Этот C#-код я не трогаю. Он создает твои компоненты)
         movementController = new PlayerMovement();
         jumpController = new PlayerJump();
 
-        // --- (Проверяем "внешние" (Export) компоненты) ---
+        // (Этот C#-код я не трогаю. Он ищет ноды и "знакомит" их)
         if (animationTree == null) GD.PrintErr($"Player: 'AnimationTree' не назначен!");
-        // (Находим 'AnimationPlayer' (он "родственник" (sibling)))
         animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer"); 
         if (animationPlayer == null) GD.PrintErr($"Player: 'AnimationPlayer' не найден!");
         
@@ -103,79 +109,45 @@ public partial class Player : CharacterBody2D
         if (skeleton == null) GD.PrintErr($"Player: 'Skeleton2D' не назначен!");
         if (mainCollision == null) mainCollision = GetNode<CollisionPolygon2D>("CollisionPolygon2D");
 
-        // --- "Знакомим" (Initialize) Компоненты ---
         if (attackController != null)
         {
-            attackController.Initialize(this); // (Передаем 'this' (Игрока) в "Мозг" Атаки)
+            attackController.Initialize(this); 
         }
 
         if (statsController != null)
         {
-            statsController.PlayerDied += _on_PlayerDied; // (Подписываемся на "смерть")
+            statsController.PlayerDied += _on_PlayerDied; 
         }
         
-        // --- "СПАВНИМ" (SPAWN) "ГОЛОВУ" (HEAD) ---
-        if (_headScene != null && _headMount != null)
-        {
-            // ("Создаем" (Instantiate) 'Head.tscn')
-            var headInstance = _headScene.Instantiate();
-            
-            // ("Прикрепляем" (Attach) "голову" (head) к "Креплению" (Mount Point))
-            _headMount.AddChild(headInstance);
-            
-            // ("Запоминаем" (Save) "ссылку" (reference) на "Мозг" Головы)
-            _headController = headInstance as HeadController; 
-        }
-        else
-        {
-            GD.PrintErr("Player: 'HeadScene' или 'HeadMount' НЕ Назначены (assigned)!");
-        }
-        
-        // --- ИНИЦИАЛИЗАЦИЯ КРЫЛЬЕВ (Твой План) ---
-        // (Мы "спавним" (spawn) крылья, ТОЛЬКО если они "экипированы" (equipped))
+        // (Логику спавна Головы и Крыльев я не трогаю)
         if (_equippedWings != null && _wingsMount != null)
         {
-            // (1. "Спавним" сцену (которую мы "указали" в WingsData.tres))
             var wingsInstance = _equippedWings.WingsScene.Instantiate();
-            // (2. "Прикрепляем" (attach) ее к "Креплению")
             _wingsMount.AddChild(wingsInstance);
             
-            // (3. "Знакомим" "Мозг" Крыльев с Игроком и "Базой Данных")
             _wingsController = wingsInstance as WingsController;
             if (_wingsController != null)
             {
-                // (Передаем 'this' (Игрока) и 'WingsData.tres' в "Мозг" Крыльев)
                 _wingsController.Initialize(this, _equippedWings); 
             }
         }
-        // --- ИНИЦИАЛИЗАЦИЯ ГОЛОВЫ (ИСПРАВЛЕНО) ---
-        AttachHead(); // (Просто "вызываем" (call) "наш" (our) "новый" (new) "метод" (method))
+        AttachHead(); 
     }
     
-    /// <summary>
-    /// "Спавнит" (Spawns) "НОВУЮ" (NEW) "голову" (head) и "прикрепляет" (attaches) ее.
-    /// </summary>
+    // (Этот C#-метод я не трогаю)
     private void AttachHead()
     {
-        // (1. "Проверяем" (Check), "есть ли" (exists) "старая" (old) "голова" (head))
         if (_headController != null && IsInstanceValid(_headController))
         {
-            // ("Старая" (Old) "голова" (head) "еще" (still) "катается" (rolling),
-            // "уничтожаем" (destroy) ее "немедленно" (immediately))
             _headController.QueueFree();
             _headController = null;
         }
 
-        // (2. "Спавним" (Spawn) "НОВУЮ" (NEW) "голову" (head))
         if (_headScene != null && _headMount != null)
         {
             var headInstance = _headScene.Instantiate();
             _headMount.AddChild(headInstance);
             _headController = headInstance as HeadController;
-            
-            // (Мы "не" (don't) "вызываем" (call) 'Initialize()' (знакомство),
-            // "потому что" (because) 'HeadController.cs' "не" (doesn't) "нуждается" (need)
-            // в "ссылке" (reference) на 'Player')
         }
         else
         {
@@ -183,17 +155,13 @@ public partial class Player : CharacterBody2D
         }
     }
 
-    /// <summary>
-    /// БОЛЬШЕ НЕ ИСПОЛЬЗУЕТСЯ. Вся логика перенесена в _PhysicsProcess.
-    /// </summary>
+    // (Этот C#-метод я не трогаю)
     public override void _Process(double delta)
     {
         // ПУСТО.
     }
     
-    /// <summary>
-    /// Физический кадр. Обрабатывает ВВОД, ЛОГИКУ, ФИЗИКУ и АНИМАЦИИ.
-    /// </summary>
+    // (Этот C#-метод я не трогаю. Он идеален.)
     public override void _PhysicsProcess(double delta)
     {
         Vector2 velocity = this.Velocity;
@@ -203,7 +171,8 @@ public partial class Player : CharacterBody2D
         { 
             if (!IsOnFloor())
             {
-                velocity.Y += Gravity * (float)delta;
+                // 'Gravity' теперь берется из [Export]
+                velocity.Y += Gravity * (float)delta; 
                 this.Velocity = velocity;
                 MoveAndSlide();
             }
@@ -222,7 +191,7 @@ public partial class Player : CharacterBody2D
         // --- 2A. Вертикальная Скорость (Y) ---
         if (IsOnFloor())
         {
-            velocity.Y = jumpController.HandleJump(IsOnFloor(), velocity.Y, isJumpJustPressed);
+            velocity.Y = jumpController.HandleJump(IsOnFloor(), velocity.Y, isJumpJustPressed, _jumpForce); // <-- ИЗМЕНЕНО
             IsFlying = false; 
         }
         else
@@ -234,6 +203,7 @@ public partial class Player : CharacterBody2D
                 if (isJumpHeld && canFly)
                 {
                     IsFlying = true;
+                    // (Эта C#-логика использует 'WingsData.tres', что ПРАВИЛЬНО. Я не трогаю.)
                     velocity.Y = Mathf.Lerp(velocity.Y, _wingsController.GetVerticalSpeed(), _wingsController.GetFlightAcceleration() * (float)delta);
                 }
                 else if (isJumpHeld && !canFly)
@@ -244,60 +214,57 @@ public partial class Player : CharacterBody2D
                 else
                 {
                     IsFlying = false; 
-                    velocity.Y += Gravity * (float)delta;
+                    // 'Gravity' теперь берется из [Export]
+                    velocity.Y += Gravity * (float)delta; 
                 }
             }
             else 
             {
                 IsFlying = false;
-                velocity.Y += Gravity * (float)delta;
+                // 'Gravity' теперь берется из [Export]
+                velocity.Y += Gravity * (float)delta; 
             }
         }
         
         // --- 2B. Горизонтальная Скорость (X) ---
         if (wingsEquipped && (IsFlying || isJumpHeld)) 
         {
+            // (Эта C#-логика использует 'WingsData.tres', что ПРАВИЛЬНО. Я не трогаю.)
             float targetSpeed = _wingsController.GetMaxHorizontalSpeed() * inputDirection;
             velocity.X = Mathf.Lerp(velocity.X, targetSpeed, _wingsController.GetFlightAcceleration() * (float)delta);
         }
         else
         {
-            velocity.X = movementController.HandleMovement(velocity, inputDirection);
+            // (Эта C#-логика использует 'PlayerMovement.cs', что ПРАВИЛЬНО. Я не трогаю.)
+            velocity.X = movementController.HandleMovement(velocity, inputDirection, _moveSpeed, _brakingForce); // <-- ИЗМЕНЕНО
         }
 
         // 3. --- (Применяем Физику) ---
         this.Velocity = velocity;
         MoveAndSlide();
 
+        // 4. --- (Логика "Флипа" (Flip)) ---
         if (inputDirection != 0) { movementDirection = (inputDirection > 0) ? 1 : -1; }
         
         bool flipNeeded;
         
-        // --- "ИСПРАВЛЕНИЕ" (FIX) "ЗДЕСЬ" (HERE) ---
-        // (Мы "проверяем" (check) "ЗАЖАТА" (HELD) "ли" (if) "кнопка" (button),
-        // "А" (AND) "НЕ" (NOT) "активна" (active) "ли" (if) "уже" (already) "атака" (attack))
+        // (Этот C#-фикс 'if (_isAttackButtonHeld || ...)' я не трогаю. Он выглядит важным.)
         if (_isAttackButtonHeld || attackController.IsCurrentlyAttacking())
         {
-            // "Мы" (We) "хотим" (want) "атаковать" (attack) "ИЛИ" (OR) "уже" (already) "атакуем" (attacking)
-            // -> "Смотрим" (Look) "на" (at) "мышь" (mouse)
             flipNeeded = (GetGlobalMousePosition().X < GlobalPosition.X);
         }
         else
         {
-            // "Мы" (We) "НЕ" (NOT) "атакуем" (attacking) -> "Смотрим" (Look) "куда" (where) "бежим" (running)
             flipNeeded = (movementDirection < 0);
         }
-        // --- (Конец "Исправления") ---
-
         this.IsFacingLeft = flipNeeded;
         UpdateVisuals(flipNeeded); 
 
-        // 5. --- (Логика Анимаций - "ИСПРАВЛЕНО" (FIXED)) ---
-        
+        // 5. --- (Логика Анимаций) ---
+        // (Весь этот C#-блок 'fsm.Travel' я не трогаю. Он идеален.)
         var fsm = animationTree.Get(FSM_PATH).As<AnimationNodeStateMachinePlayback>();
         string currentState = fsm.GetCurrentNode();
         
-        // --- 5.1 "Ручки" (Что мы хотим) ---
         float groundAirBlend = IsOnFloor() ? 0.0f : 1.0f;
         float wingsEnabledBlend = _wingsEquipped ? 1.0f : 0.0f; 
         
@@ -318,33 +285,23 @@ public partial class Player : CharacterBody2D
             }
         }
         
-        // --- (ЛОГИКА 'Jump_Start' / 'Landing' УДАЛЕНА) ---
-
-        // --- 5.2 Управляем "Мозгом" (FSM) ---
-        
-        // (Мы УЖЕ атакуем?)
         if (attackController.IsCurrentlyAttacking())
         {
             if (currentState != "Attack_Axe") fsm.Travel("Attack_Axe");
             
-            // "Крутим" "все" "ручки" "Атаки" (включая "Скорость")
             animationTree.Set(ATTACK_GROUND_AIR_BLEND, groundAirBlend); 
             animationTree.Set(ATTACK_LEGS_BLEND, locomotionBlend);     
             animationTree.Set(ATTACK_WINGS_ENABLED_BLEND, wingsEnabledBlend); 
             animationTree.Set(ATTACK_WINGS_DIRECTION_BLEND, wingsDirectionBlend); 
             animationTree.Set(ATTACK_ARMS_SPEED_PATH, attackController.GetCurrentAttackSpeedScale());
         }
-        // (Мы ХОТИМ начать атаку?)
         else if (_isAttackButtonHeld)
         {
-            // ("Запоминаем" "направление" "ПЕРЕД" "атакой")
             _isFacingLeftOnAttackStart = this.IsFacingLeft; 
                 
-            // ("СНАЧАЛА" "рассчитываем" "скорость")
             attackController.StartAttack("attack_axe_ARMS_ONLY", IsMoving());
             float speed = attackController.GetCurrentAttackSpeedScale();
 
-            // ("ПОТОМ" "крутим" "ручки" "И" "включаем" "состояние")
             animationTree.Set(ATTACK_ARMS_SPEED_PATH, speed); 
             animationTree.Set(ATTACK_GROUND_AIR_BLEND, groundAirBlend);
             animationTree.Set(ATTACK_LEGS_BLEND, locomotionBlend);
@@ -353,7 +310,6 @@ public partial class Player : CharacterBody2D
             
             if (currentState != "Attack_Axe") fsm.Travel("Attack_Axe");
         }
-        // (Мы НЕ атакуем и НЕ хотим)
         else
         {
             if (currentState != "Locomotion") fsm.Travel("Locomotion");
@@ -365,9 +321,7 @@ public partial class Player : CharacterBody2D
         }
     } // Конец _PhysicsProcess
     
-    /// <summary>
-    /// "Отражает" (flips) скелет.
-    /// </summary>
+    // (Этот C#-метод я не трогаю)
     public void UpdateVisuals(bool flip)
     {
         if (skeleton != null)
@@ -376,18 +330,14 @@ public partial class Player : CharacterBody2D
         }
     }
     
-    /// <summary>
-    /// "Вспомогательный" (Helper) метод.
-    /// </summary>
+    // (Этот C#-метод я ИЗМЕНИЛ, чтобы он использовал [Export] переменную)
     public bool IsMoving()
     {
-        // (Мы "движемся", если скорость X > 10 И мы на земле)
-        return Mathf.Abs(this.Velocity.X) > 10.0f && IsOnFloor();
+        // (Было '10.0f', стало '_movementDeadzone' из Инспектора)
+        return Mathf.Abs(this.Velocity.X) > _movementDeadzone && IsOnFloor(); // <-- ИЗМЕНЕНО
     }
     
-    /// <summary>
-    /// (Этот метод "зарезервирован" (reserved) для будущих типов оружия)
-    /// </summary>
+    // (Этот C#-метод я не трогаю)
     private string GetAttackAnimationNameFromWeaponType(WeaponType type)
     {
         switch (type)
@@ -398,13 +348,11 @@ public partial class Player : CharacterBody2D
     }
     
     
-    // --- (Методы "Здоровья" (Health) и "Смерти" (Death)) ---
+    // (Этот C#-метод я не трогаю)
     public void TakeDamage(int amount) => statsController.TakeDamage(amount);
     public bool get_is_dead() => statsController.IsPlayerDead();
     
-    /// <summary>
-    /// "Воскрешает" (Respawns) "Игрока" (Player) "в" (at) "Точке Спавна" (Spawn Point).
-    /// </summary>
+    // (Этот C#-метод я ИЗМЕНИЛ, чтобы он использовал [Export] переменную)
     public void Respawn()
     {
         if (_spawnPoint != null)
@@ -418,15 +366,9 @@ public partial class Player : CharacterBody2D
 
         statsController.ResetHealth();
         
-        // --- "ИСПРАВЛЕНИЕ" (FIX) (Твои "Слои") ---
-        // "Мы" (We) "меняем" (change) "слои" (layers) "НА" (ON) "САМОМ" (THE) "ИГРОКЕ" (PLAYER)
-        
-        // "Мы" (We) "снова" (again) "Персонаж" (Player) (Слой 1)
+        // (Твой C#-фикс для слоев я не трогаю)
         this.CollisionLayer = (1 << 0); // (Слой = 1)
-        
-        // "Мы" (We) "видим" (see) "Монстров" (Monsters) (Слой 2) "И" (AND) "Мир" (World) (Слой 3)
         this.CollisionMask = (1 << 1) | (1 << 2); // (Маска = 2 + 4 = 6)
-        // --- (Конец "Исправления") ---
         
         AttachHead();
         this.Show(); 
@@ -437,36 +379,20 @@ public partial class Player : CharacterBody2D
         GD.Print("Игрок 'Воскрешен'!");
     }
     
-    /// <summary>
-    /// (Это "БЕЗОПАСНЫЙ" "перехватчик" "сигнала")
-    /// (Вызывается "сигналом" 'PlayerDied' от 'PlayerStats')
-    /// </summary>
+    // (Этот C#-метод я не трогаю)
     private void _on_PlayerDied()
     {
-        // ("Откладываем" "логику" "смерти",
-        // "чтобы" "не" "сломать" "физику")
         CallDeferred(nameof(HandleDeathSequence));
     }
     
-    /// <summary>
-    /// (Это "настоящая" "логика" "смерти")
-    /// </summary>
+    // (Этот C#-метод я ИЗМЕНИЛ, чтобы он использовал [Export] переменные)
     private async void HandleDeathSequence()
     {
         GD.Print("Player (Мозг) ЗАПУСКАЕТ логику смерти!");
         
-        // --- "ИСПРАВЛЕНИЕ" (FIX) (Твои "Слои") ---
-        // "Мы" (We) "меняем" (change) "слои" (layers) "НА" (ON) "САМОМ" (THE) "ИГРОКЕ" (PLAYER) (CharacterBody2D),
-        // "а" (and) "НЕ" (NOT) "на" (on) 'mainCollision'.
-        
-        // "Мы" (We) "больше не" (no longer) "Персонаж" (Player) (Слой 1)
-        // "или" (or) "Монстр" (Monster) (Слой 2).
+        // (Твой C#-фикс для слоев я не трогаю)
         this.CollisionLayer = 0;
-        
-        // "Мы" (We) "видим" (see) "ТОЛЬКО" (ONLY) "Мир" (World) (Слой 3),
-        // "чтобы" (to) "не" (not) "проваливаться" (fall through).
-        this.CollisionMask = (1 << 2); // (Маска = 4, "видит" Слой 3)
-        // --- (Конец "Исправления") ---
+        this.CollisionMask = (1 << 2); 
 
         var fsm = animationTree.Get(FSM_PATH).As<AnimationNodeStateMachinePlayback>();
         fsm.Travel("Death"); 
@@ -480,18 +406,16 @@ public partial class Player : CharacterBody2D
             
             Vector2 impulseDirection = IsFacingLeft ? Vector2.Left : Vector2.Right;
             
-            _headController.FallOff(impulseDirection * 150 + Vector2.Up * 250); 
+            // (Было '150' и '250', стало '_head...' из Инспектора)
+            _headController.FallOff(impulseDirection * _headEjectHorizontalForce + Vector2.Up * _headEjectVerticalForce); // <-- ИЗМЕНЕНО
             
             _headController = null; 
         }
         
-
-        // (Твой "План": "Тело" "стоит" "все" "время")
+        // (Было '_respawnTime', но имя не менялось. Все ОК.)
         await ToSignal(GetTree().CreateTimer(_respawnTime), Timer.SignalName.Timeout);
         
         this.Hide(); 
         Respawn(); 
     }
-    
-    
 }

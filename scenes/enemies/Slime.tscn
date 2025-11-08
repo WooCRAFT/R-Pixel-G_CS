@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://b6qvcihsaxj4g"]
+[gd_scene load_steps=14 format=3 uid="uid://b6qvcihsaxj4g"]
 
 [ext_resource type="Script" uid="uid://dn6gheodhtv20" path="res://scripts/enemies/slime/Slime.cs" id="1_2hd65"]
 [ext_resource type="Texture2D" uid="uid://l74e8xpgwwd6" path="res://assets/sprites/enemies/blue slime.png" id="1_d12es"]
@@ -11,24 +11,154 @@
 
 [sub_resource type="Animation" id="Animation_q2u7j"]
 resource_name = "slime_death"
-length = 0.8
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(0.1, 0.1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_4ni1i"]
+resource_name = "idle"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, -3), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:scale")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(0.95, 1.05), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_dblny"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_xdv7e"]
+resource_name = "jump"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 4), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:scale")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.2, 0.7), Vector2(1, 1)]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_4ni1i"]
 _data = {
-&"slime_death": SubResource("Animation_q2u7j")
+&"RESET": SubResource("Animation_dblny"),
+&"dead": SubResource("Animation_q2u7j"),
+&"idle": SubResource("Animation_4ni1i"),
+&"jump": SubResource("Animation_xdv7e")
 }
 
 [node name="Slime" type="CharacterBody2D" groups=["enemies"]]
 collision_layer = 2
 collision_mask = 5
 script = ExtResource("1_2hd65")
+BrakingForce = 750.0
+AttackDamage = 20.0
+MaxHealth = 100.0
+_touchHitboxPolygonPath = NodePath("Touch_Hitbox/CollisionPolygon2D")
+_jumpTimerPath = NodePath("JumpTimer")
+_attackCooldownTimerPath = NodePath("SlimeAttack/AttackCooldownTimer")
+_animationPlayerPath = NodePath("SlimeAnimationPlayer")
+_statsNodePath = NodePath("SlimeStats")
+_spritePath = NodePath("Sprite2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_d12es")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-position = Vector2(0, -1.5)
-polygon = PackedVector2Array(22, -11.5, 26, -5.5, 29, 0.5, 28, 8.5, 28, 13.5, 22, 18.5, 13, 20.5, 2, 21.5, -10, 21.5, -20, 20.5, -27, 16.5, -29, 9.5, -29, 1.5, -26, -6.5, -22, -12.5, -15, -17.5, -9, -20.5, -1, -21.5, 8, -21.5, 15, -18.5)
+polygon = PackedVector2Array(22, -11.5, 26, -5.5, 29, 0.5, 28, 8.5, 28, 13.5, 22, 18, 13, 18, 2, 18, -10, 18, -21, 18, -27, 16.5, -29, 9.5, -29, 1.5, -26, -6.5, -22, -12.5, -15, -19, -8, -21, -1, -22, 8, -21.5, 15, -18.5)
 
 [node name="JumpTimer" type="Timer" parent="."]
 wait_time = 3.0
@@ -70,6 +200,7 @@ collision_layer = 0
 collision_mask = 5
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Touch_Hitbox"]
+visible = false
 polygon = PackedVector2Array(-16, 20, -4, 20, 10, 20, 21, 18, 28, 13, 29, 9, 29, -3, 25, -10, 15, -20, 8, -23, -8, -23, -18, -18, -27, -7, -30, 4, -29, 11, -25, 17)
 
 [connection signal="timeout" from="JumpTimer" to="." method="_on_jump_timer_timeout"]

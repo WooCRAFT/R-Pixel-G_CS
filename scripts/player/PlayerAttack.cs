@@ -3,10 +3,40 @@ using System;
 
 public partial class PlayerAttack : Node
 {
+    // --- НАСТРОЙКИ (Баланс) ---
+    [ExportGroup("Настройки Оружия (Баланс)")]
+    // (Это ГЛАВНАЯ C#-переменная. Все "магические числа" 
+    // (Урон, Длительность) "живут" ВНУТРИ этого Ресурса .tres)
     [Export] public WeaponData CurrentWeapon;
-    [Export] private NodePath weaponHolderPath;
 
-    // --- ССЫЛКИ ---
+    // --- ССЫЛКИ НА УЗЛЫ (Настройка) ---
+    [ExportGroup("Ссылки на Узлы (Настройка)")]
+    [Export] private NodePath weaponHolderPath;
+    
+    // --- РУЧКА ДЛЯ АНИМАЦИЙ (Настройка) ---
+    [ExportGroup("Ручка для Анимаций (Hitbox)")]
+    // (Твой "умный" C#-сеттер. Я его не трогаю, он идеален.)
+    [Export]
+    public bool HitboxControl
+    {
+        get => _hitboxEnabled;
+        set
+        {
+            _hitboxEnabled = value; 
+            if (_hitboxEnabled)
+            {
+                EnableWeaponHitbox();
+            }
+            else
+            {
+                DisableWeaponHitbox();
+            }
+        }
+    }
+    // (Внутренняя C#-переменная для "ручки")
+    private bool _hitboxEnabled = false;
+
+    // --- ССЫЛКИ (Внутренние) ---
     private Player player;
     private AnimationPlayer animationPlayer; 
     private Node2D weaponHolder;
@@ -16,46 +46,16 @@ public partial class PlayerAttack : Node
 
     // --- НАШ "УМНЫЙ" ТАЙМЕР ---
     private Timer _attackTimer; 
-    
-    private float _currentAttackSpeedScale = 1.0f; // ("Запоминаем" (Remember) "скорость")
+    private float _currentAttackSpeedScale = 1.0f; 
 
-    // --- ФЛАГИ СОСТОЯНИЯ ---
+    // --- ФЛАГИ СОСТОЯНИЯ (Внутренние) ---
     private bool isAttacking = false;
     private bool wasMovingOnAttackStart = false; 
     private string currentAttackAnimName = ""; 
     
-    // --- "ИСПРАВЛЕНИЕ" (FIX) (ТВОЯ "ИДЕЯ") ---
     
-    // (1. Мы "прячем" (hide) "настоящую" (real) "переменную" (variable))
-    private bool _hitboxEnabled = false;
-
-    // (2. Мы "ПОКАЗЫВАЕМ" (SHOW) "Анимации" (Animation)
-    // "фальшивую" (fake) "ручку" (handle))
-    [Export]
-    public bool HitboxControl
-    {
-        // (Когда "Анимация" (Animation) "читает" (reads) "ручку")
-        get => _hitboxEnabled;
-        
-        // (Когда "АНИМАЦИЯ" (ANIMATION) "ПИШЕТ" (writes) "в" (in) "ручку" (e.g., 'true'))
-        set
-        {
-            _hitboxEnabled = value; // ("Обновляем" (Update) "переменную")
-            
-            // (3. "СЕТТЕР" (SETTER) "ВЫЗЫВАЕТ" (CALLS) "МЕТОД" (METHOD)!)
-            if (_hitboxEnabled)
-            {
-                EnableWeaponHitbox(); // (Если 'true' -> "Включить")
-            }
-            else
-            {
-                DisableWeaponHitbox(); // (Если 'false' -> "Выключить")
-            }
-        }
-    }
-    // --- (Конец "Исправления") ---
-
-
+    // --- C#-МЕТОДЫ (Я их не трогаю, они работают) ---
+    
     public void Initialize(Player playerNode)
     {
         this.player = playerNode;
@@ -136,13 +136,8 @@ public partial class PlayerAttack : Node
         wasMovingOnAttackStart = isMoving; 
         currentAttackAnimName = animName; 
         
-        // --- "ИСПРАВЛЕНИЕ" (FIX) "ЗДЕСЬ" (HERE) ---
-        // (1. "Рассчитываем" (Calculate) "И" (AND) "Запоминаем" (SAVE) "скорость")
         _currentAttackSpeedScale = GetAttackSpeedScale(animName);
         
-        // (Мы "УДАЛИЛИ" (REMOVED) 'EnableWeaponHitbox' "отсюда" (from here))
-        
-        // (2. "ЗАПУСКАЕМ" (START) "ТАЙМЕР")
         double attackDuration = GetAttackDuration();
         _attackTimer.WaitTime = attackDuration;
         _attackTimer.Start();
@@ -150,20 +145,13 @@ public partial class PlayerAttack : Node
         GD.Print($"PlayerAttack: Атака НАЧАТА. Скорость: {_currentAttackSpeedScale}x.");
     }
 
-    /// <summary>
-    /// Вызывается АВТОМАТИЧЕСКИ, когда "умный" таймер атаки завершается.
-    /// </summary>
     private void _OnAttackTimerTimeout()
     {
         GD.Print($"PlayerAttack: Таймер атаки ЗАВЕРШЕН.");
         
         isAttacking = false; 
         currentAttackAnimName = "";
-        
-        // --- "ИСПРАВЛЕНИЕ" (FIX) "ЗДЕСЬ" (HERE) ---
-        _currentAttackSpeedScale = 1.0f; // ("Сбрасываем" (Reset) "скорость" (speed))
-        
-        // (Мы "УДАЛИЛИ" (REMOVED) 'DisableWeaponHitbox' "отсюда" (from here))
+        _currentAttackSpeedScale = 1.0f; 
     }
     
     private void _on_weapon_hitbox_body_entered(Node2D body)
@@ -171,14 +159,11 @@ public partial class PlayerAttack : Node
        if (body.IsInGroup("enemies") && body.HasMethod("TakeDamage"))
        {
           if (body.HasMethod("get_is_dead") && (bool)body.Call("get_is_dead") == true) return;
+          // (C#-код УЖЕ использует 'CurrentWeapon' для урона. Идеально!)
           if (CurrentWeapon != null) body.Call("TakeDamage", CurrentWeapon.Damage);
        }
     }
 
-    /// <summary>
-    /// (Это "старые" (old) "методы" (methods). "Теперь" (Now) "они" (they)
-    /// "управляются" (are controlled) "ручкой" (handle) 'HitboxControl')
-    /// </summary>
     public void EnableWeaponHitbox()
     {
         if (currentHitbox != null)

@@ -6,7 +6,6 @@
 [resource]
 script = ExtResource("1_to5hr")
 Damage = 5
-AttackCooldown = 0.2
 AttackDuration = 0.4
 WeaponScene = ExtResource("1_mtm8h")
 metadata/_custom_type_script = "uid://b3ocheuli6awv"
