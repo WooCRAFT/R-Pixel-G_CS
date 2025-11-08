@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" uid="uid://ck445uocgcbml" path="res://scripts/player/Player.cs" id="1_6eyey"]
 [ext_resource type="Texture2D" uid="uid://c1jrpqqw05ajc" path="res://assets/sprites/player/skeleton/Original.png" id="2_8qjgm"]
-[ext_resource type="PackedScene" uid="uid://clpkjkim6fy6l" path="res://assets/player/wings/Wings.tscn" id="2_pi3ps"]
+[ext_resource type="PackedScene" uid="uid://clpkjkim6fy6l" path="res://scenes/items/Wings.tscn" id="2_pi3ps"]
 [ext_resource type="Texture2D" uid="uid://dx8vefysrkd5" path="res://assets/sprites/player/animation_sprite/head_blink_sheet.png" id="3_8qjgm"]
 [ext_resource type="Script" uid="uid://j0hvkdmlc8lf" path="res://scripts/data/WingsData.cs" id="3_kswpp"]
-[ext_resource type="PackedScene" uid="uid://t4rbu0udyscw" path="res://Head.tscn" id="4_v5i4m"]
+[ext_resource type="PackedScene" uid="uid://t4rbu0udyscw" path="res://scenes/player/Head.tscn" id="4_v5i4m"]
 [ext_resource type="Texture2D" uid="uid://dqrfsfvm1134r" path="res://стрелка-export.png" id="5_8qjgm"]
 [ext_resource type="Texture2D" uid="uid://bo7in3brnes4j" path="res://assets/sprites/player/skeleton/UpperArm_R.png" id="7_8qjgm"]
 [ext_resource type="Texture2D" uid="uid://ds1fsqffvsirf" path="res://assets/sprites/player/skeleton/LowerArm_R.png" id="8_ejd4k"]
@@ -2197,7 +2197,7 @@ texture = ExtResource("7_8qjgm")
 
 [node name="LowerArmBone_R" type="Bone2D" parent="CharacterSkeleton/RootBone/TorsoBone/UpperArmBone_R"]
 position = Vector2(-4, 14)
-scale = Vector2(0.99999815, 0.99999815)
+scale = Vector2(0.9999981, 0.9999981)
 rest = Transform2D(0.99999964, 0, 0, 0.99999964, -4, 14)
 auto_calculate_length_and_angle = false
 length = 14.0
@@ -2228,7 +2228,7 @@ texture = ExtResource("5_8qjgm")
 
 [node name="UpperArmBone_L" type="Bone2D" parent="CharacterSkeleton/RootBone/TorsoBone"]
 position = Vector2(13, -18)
-scale = Vector2(0.9999974, 0.9999974)
+scale = Vector2(0.9999973, 0.9999973)
 rest = Transform2D(0.9999992, 0, 0, 0.9999992, 13, -18)
 editor_settings/show_bone_gizmo = false
 
@@ -2239,7 +2239,7 @@ texture = ExtResource("10_pi3ps")
 
 [node name="LowerArmBone_L" type="Bone2D" parent="CharacterSkeleton/RootBone/TorsoBone/UpperArmBone_L"]
 position = Vector2(-1, 10)
-scale = Vector2(0.99999815, 0.99999815)
+scale = Vector2(0.9999981, 0.9999981)
 rest = Transform2D(0.99999946, 0, 0, 0.99999946, -1, 10)
 auto_calculate_length_and_angle = false
 length = 14.0
@@ -2267,7 +2267,7 @@ editor_settings/show_bone_gizmo = false
 
 [node name="UpperLegBone_R" type="Bone2D" parent="CharacterSkeleton/RootBone/HipBone_R"]
 position = Vector2(0, -2.3841858e-07)
-scale = Vector2(0.9999978, 0.9999978)
+scale = Vector2(0.99999774, 0.99999774)
 rest = Transform2D(0.99999946, 0, 0, 0.99999946, 0, -2.3841858e-07)
 auto_calculate_length_and_angle = false
 length = 14.0
@@ -2302,7 +2302,7 @@ editor_settings/show_bone_gizmo = false
 
 [node name="UpperLegBone_L" type="Bone2D" parent="CharacterSkeleton/RootBone/HipBone_L"]
 position = Vector2(0, 1.1368684e-13)
-scale = Vector2(0.9999978, 0.9999978)
+scale = Vector2(0.99999774, 0.99999774)
 rest = Transform2D(0.99999946, 0, 0, 0.99999946, 0, 1.1368684e-13)
 auto_calculate_length_and_angle = false
 length = 14.0

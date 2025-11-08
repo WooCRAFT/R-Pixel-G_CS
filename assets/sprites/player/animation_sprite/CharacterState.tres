@@ -35,7 +35,7 @@ animation = &"attack_axe_ARMS_ONLY"
 [sub_resource type="AnimationNodeAdd2" id="AnimationNodeAdd2_os2r0"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_23pfx"]
-graph_offset = Vector2(-264.4984, 389.12164)
+graph_offset = Vector2(-237.93268, -38.1828)
 nodes/output/position = Vector2(1280, 500)
 "nodes/Animation 3/node" = SubResource("AnimationNodeAnimation_oijuj")
 "nodes/Animation 3/position" = Vector2(220, 0)
@@ -98,7 +98,7 @@ animation = &"idle_main"
 [sub_resource type="AnimationNodeBlend3" id="AnimationNodeBlend3_c42qn"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_vnj0r"]
-graph_offset = Vector2(-691.0047, 132.4221)
+graph_offset = Vector2(-508.77325, -161.28952)
 nodes/output/position = Vector2(680, 80)
 "nodes/Animation 3/node" = SubResource("AnimationNodeAnimation_av4b1")
 "nodes/Animation 3/position" = Vector2(-40, -140)

@@ -23,6 +23,11 @@ Hud="*res://scenes/ui/HUD.tscn"
 
 project/assembly_name="R Pixel G_CS"
 
+[editor]
+
+version_control/plugin_name="GitPlugin"
+version_control/autoload_on_startup=true
+
 [importer_defaults]
 
 animation_library={
